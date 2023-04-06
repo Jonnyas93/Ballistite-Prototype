@@ -17,6 +17,7 @@ namespace Platformer.Mechanics
         public AudioClip jumpAudio;
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
+        public Transform mouseIndicator;
 
         /// <summary>
         /// Max horizontal speed of the player.
@@ -37,8 +38,9 @@ namespace Platformer.Mechanics
         bool jump;
         Vector2 move;
         SpriteRenderer spriteRenderer;
-        internal Animator animator;
+        //internal Animator animator;
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
+        public static Vector3 mousePos;
 
         public Bounds Bounds => collider2d.bounds;
 
@@ -48,21 +50,27 @@ namespace Platformer.Mechanics
             audioSource = GetComponent<AudioSource>();
             collider2d = GetComponent<Collider2D>();
             spriteRenderer = GetComponent<SpriteRenderer>();
-            animator = GetComponent<Animator>();
+            //animator = GetComponent<Animator>();
         }
 
         protected override void Update()
         {
+            mousePos = Input.mousePosition;
+            mousePos.z = Camera.main.nearClipPlane;
+            Vector3 Worldpos = Camera.main.ScreenToWorldPoint(mousePos);
+            Vector2 Worldpos2D = new Vector2(Worldpos.x, Worldpos.y);
+            mouseIndicator.position = Worldpos2D;
             if (controlEnabled)
             {
-                move.x = Input.GetAxis("Horizontal");
-                if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
-                    jumpState = JumpState.PrepareToJump;
-                else if (Input.GetButtonUp("Jump"))
-                {
-                    stopJump = true;
-                    Schedule<PlayerStopJump>().player = this;
-                }
+                //move.x = Input.GetAxis("Horizontal");
+                //if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
+                //    jumpState = JumpState.PrepareToJump;
+                //else if (Input.GetButtonUp("Jump"))
+                //{
+                //    stopJump = true;
+                //    Schedule<PlayerStopJump>().player = this;
+                //}
+
             }
             else
             {
@@ -123,8 +131,8 @@ namespace Platformer.Mechanics
             else if (move.x < -0.01f)
                 spriteRenderer.flipX = true;
 
-            animator.SetBool("grounded", IsGrounded);
-            animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
+            //animator.SetBool("grounded", IsGrounded);
+            //animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
 
             targetVelocity = move * maxSpeed;
         }
