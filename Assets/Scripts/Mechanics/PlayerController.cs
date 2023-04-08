@@ -18,6 +18,8 @@ namespace Platformer.Mechanics
         public AudioClip respawnAudio;
         public AudioClip ouchAudio;
         public Transform mouseIndicator;
+        public Transform barrel;
+        public Transform muzzle;
 
         /// <summary>
         /// Max horizontal speed of the player.
@@ -42,6 +44,10 @@ namespace Platformer.Mechanics
         readonly PlatformerModel model = Simulation.GetModel<PlatformerModel>();
         public static Vector3 mousePos;
 
+        private Vector3 Worldpos;
+        private Vector2 Worldpos2D;
+        private float angle;
+
         public Bounds Bounds => collider2d.bounds;
 
         void Awake()
@@ -55,13 +61,16 @@ namespace Platformer.Mechanics
 
         protected override void Update()
         {
-            mousePos = Input.mousePosition;
-            mousePos.z = Camera.main.nearClipPlane;
-            Vector3 Worldpos = Camera.main.ScreenToWorldPoint(mousePos);
-            Vector2 Worldpos2D = new Vector2(Worldpos.x, Worldpos.y);
-            mouseIndicator.position = Worldpos2D;
+            
             if (controlEnabled)
             {
+                mousePos = Input.mousePosition;
+                mousePos.z = Camera.main.nearClipPlane;
+                Worldpos = Camera.main.ScreenToWorldPoint(mousePos);
+                Worldpos2D = new Vector2(Worldpos.x, Worldpos.y);
+                mouseIndicator.position = Worldpos2D;
+                angle = Mathf.Atan2(Worldpos2D.y, Worldpos2D.x) * Mathf.Rad2Deg;
+                barrel.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
                 //move.x = Input.GetAxis("Horizontal");
                 //if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
                 //    jumpState = JumpState.PrepareToJump;
