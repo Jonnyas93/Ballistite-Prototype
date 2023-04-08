@@ -20,6 +20,8 @@ namespace Platformer.Mechanics
         public Transform mouseIndicator;
         public Transform barrel;
         public Transform muzzle;
+        public GameObject projectile;
+        public float shotForce = 1f;
 
         /// <summary>
         /// Max horizontal speed of the player.
@@ -71,6 +73,15 @@ namespace Platformer.Mechanics
                 mouseIndicator.position = Worldpos2D;
                 angle = Mathf.Atan2(Worldpos2D.y, Worldpos2D.x) * Mathf.Rad2Deg;
                 barrel.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+                if (Input.GetButtonDown("Fire1"))
+                {
+                    GameObject shotProjectile = Instantiate(projectile);
+                    shotProjectile.transform.position = muzzle.transform.position;
+                    shotProjectile.transform.rotation = muzzle.transform.rotation;
+                    Rigidbody2D shotProjectileRB = shotProjectile.GetComponent<Rigidbody2D>();
+                    shotProjectileRB.AddForce(transform.forward * shotForce);
+
+                }
                 //move.x = Input.GetAxis("Horizontal");
                 //if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
                 //    jumpState = JumpState.PrepareToJump;
