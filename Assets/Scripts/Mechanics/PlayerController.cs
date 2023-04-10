@@ -79,17 +79,18 @@ namespace Platformer.Mechanics
                     shotProjectile.transform.position = muzzle.transform.position;
                     shotProjectile.transform.rotation = muzzle.transform.rotation;
                     Rigidbody2D shotProjectileRB = shotProjectile.GetComponent<Rigidbody2D>();
-                    shotProjectileRB.AddForce(transform.forward * shotForce);
-
+                    float angleInRadians = angle * Mathf.Deg2Rad;
+                    Vector2 forceDirection = new Vector2(Mathf.Cos(angleInRadians), Mathf.Sin(angleInRadians));
+                    shotProjectileRB.AddForce(forceDirection * shotForce, ForceMode2D.Impulse);
                 }
-                //move.x = Input.GetAxis("Horizontal");
-                //if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
-                //    jumpState = JumpState.PrepareToJump;
-                //else if (Input.GetButtonUp("Jump"))
-                //{
-                //    stopJump = true;
-                //    Schedule<PlayerStopJump>().player = this;
-                //}
+                move.x = Input.GetAxis("Horizontal");
+                if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
+                    jumpState = JumpState.PrepareToJump;
+                else if (Input.GetButtonUp("Jump"))
+                {
+                    stopJump = true;
+                    Schedule<PlayerStopJump>().player = this;
+                }
 
             }
             else
