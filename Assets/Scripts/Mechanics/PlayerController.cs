@@ -71,7 +71,7 @@ namespace Platformer.Mechanics
                 Worldpos = Camera.main.ScreenToWorldPoint(mousePos);
                 Worldpos2D = new Vector2(Worldpos.x, Worldpos.y);
                 mouseIndicator.position = Worldpos2D;
-                angle = Mathf.Atan2(Worldpos2D.y, Worldpos2D.x) * Mathf.Rad2Deg;
+                angle = Mathf.Atan2(Worldpos2D.y-transform.position.y, Worldpos2D.x - transform.position.x) * Mathf.Rad2Deg;
                 barrel.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
                 if (Input.GetButtonDown("Fire1"))
                 {
@@ -80,7 +80,7 @@ namespace Platformer.Mechanics
                     shotProjectile.transform.rotation = muzzle.transform.rotation;
                     Rigidbody2D shotProjectileRB = shotProjectile.GetComponent<Rigidbody2D>();
                     float angleInRadians = angle * Mathf.Deg2Rad;
-                    Vector2 forceDirection = new Vector2(Mathf.Cos(angleInRadians), Mathf.Sin(angleInRadians));
+                    Vector2 forceDirection = new(Mathf.Cos(angleInRadians), Mathf.Sin(angleInRadians));
                     shotProjectileRB.AddForce(forceDirection * shotForce, ForceMode2D.Impulse);
                 }
                 move.x = Input.GetAxis("Horizontal");
