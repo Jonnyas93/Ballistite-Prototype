@@ -48,7 +48,7 @@ namespace Platformer.Mechanics
 
         private Vector3 Worldpos;
         private Vector2 Worldpos2D;
-        private float angle;
+        private float barrelAngle;
 
         public Bounds Bounds => collider2d.bounds;
 
@@ -61,6 +61,8 @@ namespace Platformer.Mechanics
             //animator = GetComponent<Animator>();
         }
 
+
+
         protected override void Update()
         {
             
@@ -71,92 +73,94 @@ namespace Platformer.Mechanics
                 Worldpos = Camera.main.ScreenToWorldPoint(mousePos);
                 Worldpos2D = new Vector2(Worldpos.x, Worldpos.y);
                 mouseIndicator.position = Worldpos2D;
-                angle = Mathf.Atan2(Worldpos2D.y-transform.position.y, Worldpos2D.x - transform.position.x) * Mathf.Rad2Deg;
-                barrel.rotation = Quaternion.Euler(new Vector3(0, 0, angle));
+                barrelAngle = Mathf.Atan2(Worldpos2D.y-transform.position.y, Worldpos2D.x - transform.position.x) * Mathf.Rad2Deg;
+                barrel.rotation = Quaternion.Euler(new Vector3(0, 0, barrelAngle));
                 if (Input.GetButtonDown("Fire1"))
                 {
+                    Rigidbody2D tankRB = GetComponent<Rigidbody2D>();
                     GameObject shotProjectile = Instantiate(projectile);
                     shotProjectile.transform.position = muzzle.transform.position;
                     shotProjectile.transform.rotation = muzzle.transform.rotation;
                     Rigidbody2D shotProjectileRB = shotProjectile.GetComponent<Rigidbody2D>();
-                    float angleInRadians = angle * Mathf.Deg2Rad;
+                    float angleInRadians = barrelAngle * Mathf.Deg2Rad;
                     Vector2 forceDirection = new(Mathf.Cos(angleInRadians), Mathf.Sin(angleInRadians));
                     shotProjectileRB.AddForce(forceDirection * shotForce, ForceMode2D.Impulse);
+                         
                 }
-                move.x = Input.GetAxis("Horizontal");
-                if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
-                    jumpState = JumpState.PrepareToJump;
-                else if (Input.GetButtonUp("Jump"))
-                {
-                    stopJump = true;
-                    Schedule<PlayerStopJump>().player = this;
-                }
+                //move.x = Input.GetAxis("Horizontal");
+                //if (jumpState == JumpState.Grounded && Input.GetButtonDown("Jump"))
+                //    jumpState = JumpState.PrepareToJump;
+                //else if (Input.GetButtonUp("Jump"))
+                //{
+                //    stopJump = true;
+                //    Schedule<PlayerStopJump>().player = this;
+                //}
 
             }
-            else
-            {
-                move.x = 0;
-            }
-            UpdateJumpState();
+            //else
+            //{
+            //    move.x = 0;
+            //}
+            //UpdateJumpState();
             base.Update();
         }
 
-        void UpdateJumpState()
-        {
-            jump = false;
-            switch (jumpState)
-            {
-                case JumpState.PrepareToJump:
-                    jumpState = JumpState.Jumping;
-                    jump = true;
-                    stopJump = false;
-                    break;
-                case JumpState.Jumping:
-                    if (!IsGrounded)
-                    {
-                        Schedule<PlayerJumped>().player = this;
-                        jumpState = JumpState.InFlight;
-                    }
-                    break;
-                case JumpState.InFlight:
-                    if (IsGrounded)
-                    {
-                        Schedule<PlayerLanded>().player = this;
-                        jumpState = JumpState.Landed;
-                    }
-                    break;
-                case JumpState.Landed:
-                    jumpState = JumpState.Grounded;
-                    break;
-            }
-        }
+        //void UpdateJumpState()
+        //{
+        //    jump = false;
+        //    switch (jumpState)
+        //    {
+        //        case JumpState.PrepareToJump:
+        //            jumpState = JumpState.Jumping;
+        //            jump = true;
+        //            stopJump = false;
+        //            break;
+        //        case JumpState.Jumping:
+        //            if (!IsGrounded)
+        //            {
+        //                Schedule<PlayerJumped>().player = this;
+        //                jumpState = JumpState.InFlight;
+        //            }
+        //            break;
+        //        case JumpState.InFlight:
+        //            if (IsGrounded)
+        //            {
+        //                Schedule<PlayerLanded>().player = this;
+        //                jumpState = JumpState.Landed;
+        //            }
+        //            break;
+        //        case JumpState.Landed:
+        //            jumpState = JumpState.Grounded;
+        //            break;
+        //    }
+        //}
 
-        protected override void ComputeVelocity()
-        {
-            if (jump && IsGrounded)
-            {
-                velocity.y = jumpTakeOffSpeed * model.jumpModifier;
-                jump = false;
-            }
-            else if (stopJump)
-            {
-                stopJump = false;
-                if (velocity.y > 0)
-                {
-                    velocity.y = velocity.y * model.jumpDeceleration;
-                }
-            }
+        //protected override void ComputeVelocity()
+        //{
+        //    if (jump && IsGrounded)
+        //    {
+        //        velocity.y = jumpTakeOffSpeed * model.jumpModifier;
+        //        jump = false;
+        //    }
+        //    else if (stopJump)
+        //    {
+        //        stopJump = false;
+        //        if (velocity.y > 0)
+        //        {
+        //            velocity.y = velocity.y * model.jumpDeceleration;
+        //        }
+        //    }
 
-            if (move.x > 0.01f)
-                spriteRenderer.flipX = false;
-            else if (move.x < -0.01f)
-                spriteRenderer.flipX = true;
+        //    if (move.x > 0.01f)
+        //        spriteRenderer.flipX = false;
+        //    else if (move.x < -0.01f)
+        //        spriteRenderer.flipX = true;
 
-            //animator.SetBool("grounded", IsGrounded);
-            //animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
+        //    //animator.SetBool("grounded", IsGrounded);
+        //    //animator.SetFloat("velocityX", Mathf.Abs(velocity.x) / maxSpeed);
 
-            targetVelocity = move * maxSpeed;
-        }
+        //    targetVelocity = move * maxSpeed;
+        //}
 
         public enum JumpState
         {
