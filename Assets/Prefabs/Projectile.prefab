@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   explosionRadius: 2
-  explosionForce: 1
+  explosionForce: 10
   explosionLayers:
     serializedVersion: 2
     m_Bits: 64
