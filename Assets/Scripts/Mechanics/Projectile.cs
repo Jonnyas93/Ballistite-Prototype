@@ -8,11 +8,19 @@ public class Projectile : MonoBehaviour
     public float explosionRadius = 100f;
     public float explosionForce = 1000f;
     public LayerMask explosionLayers;
+    private ParticleSystem explosionEffect;
+    private Rigidbody2D rb;
+    private BoxCollider2D bc;
+    private SpriteRenderer sp;
+
 
     // Start is called before the first frame update
     void Start()
     {
-
+        explosionEffect = GetComponentInChildren<ParticleSystem>();
+        rb = GetComponent<Rigidbody2D>();
+        bc = GetComponent<BoxCollider2D>();
+        sp = GetComponent<SpriteRenderer>();
     }
 
     // Update is called once per frame
@@ -41,7 +49,11 @@ public class Projectile : MonoBehaviour
                 rb.AddForce(direction.normalized * (1 - distance / explosionRadius) * explosionForce, ForceMode2D.Impulse);
             }
         }
-        Destroy(this.gameObject);
+        explosionEffect.Play();
+        rb.constraints = RigidbodyConstraints2D.FreezeAll;
+        bc.enabled = false;
+        sp.enabled = false;
+        Destroy(gameObject, explosionEffect.main.duration);
     }
     private void OnDrawGizmos()
     {
