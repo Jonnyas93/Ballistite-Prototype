@@ -8,6 +8,9 @@ public class Projectile : MonoBehaviour
     public float explosionRadius = 100f;
     public float explosionForce = 1000f;
     public LayerMask explosionLayers;
+    public AudioClip explosionSound;
+
+    private AudioSource soundMachine;
     private ParticleSystem explosionEffect;
     private Rigidbody2D rb;
     private BoxCollider2D bc;
@@ -21,6 +24,7 @@ public class Projectile : MonoBehaviour
         rb = GetComponent<Rigidbody2D>();
         bc = GetComponent<BoxCollider2D>();
         sp = GetComponent<SpriteRenderer>();
+        soundMachine = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -50,6 +54,7 @@ public class Projectile : MonoBehaviour
             }
         }
         explosionEffect.Play();
+        soundMachine.PlayOneShot(explosionSound);
         rb.constraints = RigidbodyConstraints2D.FreezeAll;
         bc.enabled = false;
         sp.enabled = false;
